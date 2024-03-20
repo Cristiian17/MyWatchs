@@ -11,47 +11,47 @@ import com.mywatchs.dao.MovieDetailsDAO;
 import com.mywatchs.model.movie.MovieDetails;
 import com.mywatchs.model.serie.SerieDetails;
 
-public class MovieDetailsActivity extends AppCompatActivity {
-    private long id;
+public class SerieDetailsActivity extends AppCompatActivity {
+
+    private int id;
     private MovieDetailsDAO movieDetailsDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_details);
+        setContentView(R.layout.activity_serie_details);
 
-        id = getIntent().getLongExtra("id",1);
+        id = getIntent().getIntExtra("id",1);
         movieDetailsDAO = new MovieDetailsDAO();
-        getMovie();
+        getSerie();
     }
 
-
-
-    private void getMovie() {
-        movieDetailsDAO.getMovieDetails(new MovieDetailsDAO.MovieDataCallback() {
+    private void getSerie() {
+        movieDetailsDAO.getSerieDetails(new MovieDetailsDAO.MovieDataCallback() {
 
             @Override
             public void onSuccessMovie(MovieDetails movieDetails) {
-                System.out.println(movieDetails.getTitle());
 
-
-                String imageUrl = "https://image.tmdb.org/t/p/w500" + movieDetails.getPosterPath();
-
-                ImageView imageView = findViewById(R.id.movieImage);
-                Glide.with(getApplicationContext()).load(imageUrl).into(imageView);
-
-                TextView overview = findViewById(R.id.tv_serie_overview);
-                overview.setText(movieDetails.getOverview());
-
-                TextView title = findViewById(R.id.tv_serie_title);
-                title.setText(movieDetails.getTitle());
-
-                TextView genre = findViewById(R.id.tv_serie_genre);
-                genre.setText(movieDetails.getGenres().toString());
             }
 
             @Override
             public void onSuccessSerie(SerieDetails serieDetails) {
+                System.out.println(serieDetails.getName());
+
+
+                String imageUrl = "https://image.tmdb.org/t/p/w500" + serieDetails.getPosterPath();
+
+                ImageView imageView = findViewById(R.id.serieImage);
+                Glide.with(getApplicationContext()).load(imageUrl).into(imageView);
+
+                TextView overview = findViewById(R.id.tv_serie_overview);
+                overview.setText(serieDetails.getOverview());
+
+                TextView title = findViewById(R.id.tv_serie_title);
+                title.setText(serieDetails.getName());
+
+                TextView genre = findViewById(R.id.tv_serie_genre);
+                genre.setText(serieDetails.getGenres().toString());
 
             }
 
@@ -61,7 +61,4 @@ public class MovieDetailsActivity extends AppCompatActivity {
             }
         }, id);
     }
-
-
-
 }

@@ -1,4 +1,4 @@
-package com.mywatchs.model;
+package com.mywatchs.model.movie;
 
 import com.google.gson.annotations.SerializedName;
 

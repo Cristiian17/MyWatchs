@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.mywatchs.R;
-import com.mywatchs.model.Movie;
+import com.mywatchs.model.movie.Movie;
 
 import java.util.List;
 

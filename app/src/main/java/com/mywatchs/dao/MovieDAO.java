@@ -3,10 +3,10 @@ package com.mywatchs.dao;
 import android.os.AsyncTask;
 
 import com.google.gson.Gson;
-import com.mywatchs.model.Movie;
-import com.mywatchs.model.MovieResponse;
-import com.mywatchs.model.Serie;
-import com.mywatchs.model.SerieResponse;
+import com.mywatchs.model.movie.Movie;
+import com.mywatchs.model.movie.MovieResponse;
+import com.mywatchs.model.serie.Serie;
+import com.mywatchs.model.serie.SerieResponse;
 
 import java.io.IOException;
 import java.util.Arrays;

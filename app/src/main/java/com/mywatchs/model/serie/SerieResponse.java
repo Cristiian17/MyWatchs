@@ -1,4 +1,4 @@
-package com.mywatchs.model;
+package com.mywatchs.model.serie;
 
 public class SerieResponse {
     private int page;

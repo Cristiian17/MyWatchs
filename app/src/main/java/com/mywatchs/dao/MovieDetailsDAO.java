@@ -3,13 +3,10 @@ package com.mywatchs.dao;
 import android.os.AsyncTask;
 
 import com.google.gson.Gson;
-import com.mywatchs.model.Movie;
-import com.mywatchs.model.MovieDetails;
+import com.mywatchs.model.movie.MovieDetails;
+import com.mywatchs.model.serie.SerieDetails;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -22,6 +19,7 @@ public class MovieDetailsDAO {
 
     public interface MovieDataCallback {
         void onSuccessMovie(MovieDetails movieDetails);
+        void onSuccessSerie(SerieDetails serieDetails);
         void onError(String errorMessage);
     }
 
@@ -57,6 +55,45 @@ public class MovieDetailsDAO {
                 super.onPostExecute(movieDetails);
                 if (movieDetails != null) {
                     callback.onSuccessMovie(movieDetails);
+                } else {
+                    callback.onError("Error fetching data from API");
+                }
+            }
+        }.execute();
+    }
+
+    public static void getSerieDetails(final MovieDetailsDAO.MovieDataCallback callback, long id) {
+        new AsyncTask<Void, Void, SerieDetails>() {
+            @Override
+            protected SerieDetails doInBackground(Void... voids) {
+                OkHttpClient client = new OkHttpClient();
+
+                Request request = new Request.Builder()
+                        .url(BASE_URL + "tv/" + id + "?language=es-ES")
+                        .get()
+                        .addHeader("accept", "application/json")
+                        .addHeader("Authorization", TOKEN)
+                        .build();
+
+                try {
+                    Response response = client.newCall(request).execute();
+                    if (response.isSuccessful()) {
+                        String responseData = response.body().string();
+                        Gson gson = new Gson();
+                        SerieDetails serieDetails = gson.fromJson(responseData, SerieDetails.class);
+                        return serieDetails;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(SerieDetails serieDetails) {
+                super.onPostExecute(serieDetails);
+                if (serieDetails != null) {
+                    callback.onSuccessSerie(serieDetails);
                 } else {
                     callback.onError("Error fetching data from API");
                 }

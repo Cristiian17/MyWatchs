@@ -1,5 +1,6 @@
 package com.mywatchs.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,17 +13,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.mywatchs.R;
-import com.mywatchs.model.Serie;
+import com.mywatchs.model.serie.Serie;
 
 import java.util.List;
 
 public class SerieAdapter extends RecyclerView.Adapter<SerieAdapter.MyViewHolder> {
     private List<Serie> serieList;
     private Context context;
+    private SerieItemClickListener serieItemClickListener;
 
-    public SerieAdapter(List<Serie> serieList, Context context) {
+    public SerieAdapter(List<Serie> serieList, Context context, SerieItemClickListener serieItemClickListener) {
         this.serieList = serieList;
         this.context = context;
+        this.serieItemClickListener = serieItemClickListener;
+    }
+    public interface SerieItemClickListener {
+        void onMovieItemClick(int position);
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -44,11 +50,21 @@ public class SerieAdapter extends RecyclerView.Adapter<SerieAdapter.MyViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         Serie serie = serieList.get(position);
         holder.textView.setText(serie.getName());
         String imageUrl = "https://image.tmdb.org/t/p/w500" + serie.getPosterPath();
         Glide.with(context).load(imageUrl).into(holder.imageView);
+
+        // Configuración del clic en el elemento
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (serieItemClickListener != null) {
+                    serieItemClickListener.onMovieItemClick(position);
+                }
+            }
+        });
     }
 
     @Override

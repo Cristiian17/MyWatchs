@@ -1,4 +1,4 @@
-package com.mywatchs.model;
+package com.mywatchs.model.movie;
 
 import android.os.Parcel;
 import android.os.Parcelable;
