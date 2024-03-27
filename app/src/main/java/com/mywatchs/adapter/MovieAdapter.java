@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.mywatchs.R;
 import com.mywatchs.model.movie.Movie;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder> {
@@ -27,6 +28,20 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
         this.context = context;
         this.movieItemClickListener = movieItemClickListener;
     }
+
+    public void setMovieList(List<Movie> movieList) {
+        this.movieList = movieList;
+        notifyDataSetChanged();
+    }
+
+    public void addMovies(List<Movie> newMovies) {
+        if (this.movieList == null) {
+            this.movieList = new ArrayList<>();
+        }
+        this.movieList.addAll(newMovies);
+        notifyDataSetChanged();
+    }
+
     public interface MovieItemClickListener {
         void onMovieItemClick(int position);
     }
@@ -69,7 +84,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MyViewHolder
 
     @Override
     public int getItemCount() {
-        return movieList.size();
+        return movieList == null ? 0 : movieList.size();
     }
 }
-

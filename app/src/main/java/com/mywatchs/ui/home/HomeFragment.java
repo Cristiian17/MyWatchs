@@ -12,7 +12,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.mywatchs.MovieDetailsActivity;
+import com.mywatchs.MoviesActivity;
 import com.mywatchs.SerieDetailsActivity;
+import com.mywatchs.SeriesActivity;
 import com.mywatchs.adapter.GenreAdapter;
 import com.mywatchs.adapter.MovieAdapter;
 import com.mywatchs.adapter.SerieAdapter;
@@ -20,7 +22,6 @@ import com.mywatchs.dao.MovieDAO;
 import com.mywatchs.databinding.FragmentHomeBinding;
 import com.mywatchs.model.movie.Movie;
 import com.mywatchs.model.serie.Serie;
-import com.mywatchs.model.serie.SerieDetails;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,8 +37,6 @@ public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -46,7 +45,19 @@ public class HomeFragment extends Fragment {
         setGenders();
         getPopularMovies();
         getPopularSeries();
+        binding.btnAllMovies.setOnClickListener(this::seeAllMovies);
+        binding.btnAllSeries.setOnClickListener(this::seeAllSeries);
         return root;
+    }
+
+    private void seeAllSeries(View view) {
+        Intent intent = new Intent(getContext(), SeriesActivity.class);
+        startActivity(intent);
+    }
+
+    private void seeAllMovies(View view) {
+        Intent intent = new Intent(getContext(), MoviesActivity.class);
+        startActivity(intent);
     }
 
     private void setGenders() {
@@ -75,7 +86,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void getPopularSeries() {
-        movieDAO.getTopRatedSeries(new MovieDAO.MovieDataCallback() {
+        movieDAO.getSeries(new MovieDAO.MovieDataCallback() {
             @Override
             public void onSuccessMovies(List<Movie> movies) {
 
@@ -105,7 +116,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void getPopularMovies() {
-        movieDAO.getPopularMovies(new MovieDAO.MovieDataCallback() {
+        movieDAO.getMovies(new MovieDAO.MovieDataCallback() {
             @Override
             public void onSuccessMovies(List<Movie> movies) {
                 HomeFragment.this.movies = movies;

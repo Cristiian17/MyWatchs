@@ -28,14 +28,55 @@ public class MovieDAO {
         void onError(String errorMessage);
     }
 
-    public static void getPopularMovies(final MovieDataCallback callback) {
+    public static void getMovies(final MovieDataCallback callback) {
         new AsyncTask<Void, Void, List<Movie>>() {
             @Override
             protected List<Movie> doInBackground(Void... voids) {
                 OkHttpClient client = new OkHttpClient();
 
                 Request request = new Request.Builder()
-                        .url(BASE_URL+"movie/popular?language=es-ES&page=1")
+                        .url(BASE_URL+"discover/movie?include_adult=false&include_video=false&language=es-ES&page=1&sort_by=vote_count.desc")
+                        .get()
+                        .addHeader("accept", "application/json")
+                        .addHeader("Authorization", TOKEN)
+                        .build();
+
+                try {
+                    Response response = client.newCall(request).execute();
+                    if (response.isSuccessful()) {
+                        String responseData = response.body().string();
+                        Gson gson = new Gson();
+                        MovieResponse movieResponse = gson.fromJson(responseData, MovieResponse.class);
+                        return Arrays.asList(movieResponse.getResults());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(List<Movie> movies) {
+                super.onPostExecute(movies);
+                if (movies != null) {
+                    callback.onSuccessMovies(movies);
+                } else {
+                    callback.onError("Error fetching data from API");
+                }
+            }
+        }.execute();
+    }
+    public static void getMoviesByPage(int pageNumber, final MovieDataCallback callback) {
+        new AsyncTask<Void, Void, List<Movie>>() {
+            @Override
+            protected List<Movie> doInBackground(Void... voids) {
+                OkHttpClient client = new OkHttpClient();
+
+                // Construye la URL con el número de página actual
+                String url = BASE_URL + "discover/movie?include_adult=false&include_video=false&language=es-ES&page=" + pageNumber + "&sort_by=vote_count.desc";
+
+                Request request = new Request.Builder()
+                        .url(url)
                         .get()
                         .addHeader("accept", "application/json")
                         .addHeader("Authorization", TOKEN)
@@ -68,53 +109,54 @@ public class MovieDAO {
     }
 
 
-    public static void getUpcomingMovies(final MovieDataCallback callback) {
-        new AsyncTask<Void, Void, List<Movie>>() {
-            @Override
-            protected List<Movie> doInBackground(Void... voids) {
-                OkHttpClient client = new OkHttpClient();
-
-                Request request = new Request.Builder()
-                        .url(BASE_URL+"trending/movie/day?language=en-US")
-                        .get()
-                        .addHeader("accept", "application/json")
-                        .addHeader("Authorization", TOKEN)
-                        .build();
-
-                try {
-                    Response response = client.newCall(request).execute();
-                    if (response.isSuccessful()) {
-                        String responseData = response.body().string();
-                        Gson gson = new Gson();
-                        MovieResponse movieResponse = gson.fromJson(responseData, MovieResponse.class);
-                        return Arrays.asList(movieResponse.getResults());
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(List<Movie> movies) {
-                super.onPostExecute(movies);
-                if (movies != null) {
-                    callback.onSuccessMovies(movies);
-                } else {
-                    callback.onError("Error fetching data from API");
-                }
-            }
-        }.execute();
-    }
-
-    public static void getTopRatedSeries(final MovieDataCallback callback) {
+    public static void getSeries(final MovieDataCallback callback) {
         new AsyncTask<Void, Void, List<Serie>>() {
             @Override
             protected List<Serie> doInBackground(Void... voids) {
                 OkHttpClient client = new OkHttpClient();
 
                 Request request = new Request.Builder()
-                        .url(BASE_URL + "trending/tv/day?language=es-ES")
+                        .url(BASE_URL + "discover/tv?include_adult=false&include_null_first_air_dates=false&language=es-ES&page=1&sort_by=vote_count.desc")
+                        .get()
+                        .addHeader("accept", "application/json")
+                        .addHeader("Authorization", TOKEN)
+                        .build();
+
+
+                try {
+                    Response response = client.newCall(request).execute();
+                    if (response.isSuccessful()) {
+                        String responseData = response.body().string();
+                        Gson gson = new Gson();
+                        SerieResponse serieResponse = gson.fromJson(responseData, SerieResponse.class);
+                        return Arrays.asList(serieResponse.getResults());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(List<Serie> series) {
+                super.onPostExecute(series);
+                if (series != null) {
+                    callback.onSuccessSeries(series);
+                } else {
+                    callback.onError("Error fetching data from API");
+                }
+            }
+        }.execute();
+    }
+
+    public static void getSeriesByPage(int pageNumber , final MovieDataCallback callback) {
+        new AsyncTask<Void, Void, List<Serie>>() {
+            @Override
+            protected List<Serie> doInBackground(Void... voids) {
+                OkHttpClient client = new OkHttpClient();
+
+                Request request = new Request.Builder()
+                        .url(BASE_URL + "discover/tv?include_adult=false&include_null_first_air_dates=false&language=es-ES&page=" + pageNumber + "&sort_by=vote_count.desc")
                         .get()
                         .addHeader("accept", "application/json")
                         .addHeader("Authorization", TOKEN)

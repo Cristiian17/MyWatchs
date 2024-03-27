@@ -15,6 +15,12 @@
         android:theme="@style/Theme.MyWatchs"
         tools:targetApi="31">
         <activity
+            android:name=".SeriesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MoviesActivity"
+            android:exported="false" />
+        <activity
             android:name=".SerieDetailsActivity"
             android:exported="false" />
         <activity
