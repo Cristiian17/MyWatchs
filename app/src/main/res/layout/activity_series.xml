@@ -5,31 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SeriesActivity">
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/allSeriesView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_last_series"
-        app:spanCount="3"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seriesGenresView"
+        app:spanCount="3" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/seriesGenresView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btn_next_series"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Siguiente"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <Button
-        android:id="@+id/btn_last_series"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="anterior"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

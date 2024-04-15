@@ -10,14 +10,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mywatchs.R;
+import com.mywatchs.model.genre.Genre;
 
 import java.util.List;
 
 public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.MyViewHolder> {
-    private List<String> genreList;
+    private List<Genre> genreList;
     private Context context;
 
-    public GenreAdapter(List<String> genreList, Context context) {
+    public GenreAdapter(List<Genre> genreList, Context context) {
         this.genreList = genreList;
         this.context = context;
     }
@@ -40,8 +41,8 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.MyViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        String genre = genreList.get(position);
-        holder.textView.setText(genre);
+        Genre genre = genreList.get(position);
+        holder.textView.setText(genre.getName());
     }
 
     @Override

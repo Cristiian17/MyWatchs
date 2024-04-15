@@ -42,7 +42,6 @@ public class HomeFragment extends Fragment {
         View root = binding.getRoot();
 
         movieDAO = new MovieDAO();
-        setGenders();
         getPopularMovies();
         getPopularSeries();
         binding.btnAllMovies.setOnClickListener(this::seeAllMovies);
@@ -58,31 +57,6 @@ public class HomeFragment extends Fragment {
     private void seeAllMovies(View view) {
         Intent intent = new Intent(getContext(), MoviesActivity.class);
         startActivity(intent);
-    }
-
-    private void setGenders() {
-        genders = Arrays.asList(
-                "Drama",
-                "Comedia",
-                "Acción",
-                "Aventura",
-                "Ciencia ficción",
-                "Fantasía",
-                "Terror",
-                "Misterio",
-                "Crimen",
-                "Animación",
-                "Documental",
-                "Romance",
-                "Thriller",
-                "Histórico",
-                "Familiar"
-        );
-
-        binding.genderView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        GenreAdapter adapter = new GenreAdapter(genders, getContext());
-        binding.genderView.setAdapter(adapter);
-
     }
 
     private void getPopularSeries() {

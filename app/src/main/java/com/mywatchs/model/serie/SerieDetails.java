@@ -3,7 +3,7 @@ package com.mywatchs.model.serie;
 import android.net.Network;
 
 import com.google.gson.annotations.SerializedName;
-import com.mywatchs.model.movie.Genre;
+import com.mywatchs.model.genre.Genre;
 import com.mywatchs.model.movie.ProductionCompany;
 import com.mywatchs.model.movie.ProductionCountry;
 import com.mywatchs.model.movie.SpokenLanguage;

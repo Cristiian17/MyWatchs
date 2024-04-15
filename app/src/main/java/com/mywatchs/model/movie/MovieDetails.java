@@ -1,6 +1,7 @@
 package com.mywatchs.model.movie;
 
 import com.google.gson.annotations.SerializedName;
+import com.mywatchs.model.genre.Genre;
 
 import java.util.List;
 
