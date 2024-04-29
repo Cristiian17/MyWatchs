@@ -3,19 +3,22 @@ package com.mywatchs.ui.home;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.mywatchs.MovieDetailsActivity;
 import com.mywatchs.MoviesActivity;
+import com.mywatchs.R;
 import com.mywatchs.SerieDetailsActivity;
 import com.mywatchs.SeriesActivity;
-import com.mywatchs.adapter.GenreAdapter;
 import com.mywatchs.adapter.MovieAdapter;
 import com.mywatchs.adapter.SerieAdapter;
 import com.mywatchs.dao.MovieDAO;
@@ -40,13 +43,37 @@ public class HomeFragment extends Fragment {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        setHasOptionsMenu(true);
 
         movieDAO = new MovieDAO();
         getPopularMovies();
         getPopularSeries();
         binding.btnAllMovies.setOnClickListener(this::seeAllMovies);
         binding.btnAllSeries.setOnClickListener(this::seeAllSeries);
+
         return root;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.action_bar, menu);
+        MenuItem searchMenuItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) searchMenuItem.getActionView();
+        searchView.setQueryHint("Search here");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // Aquí puedes manejar la acción cuando se envía una consulta de búsqueda
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // Aquí puedes manejar la acción cuando el texto de búsqueda cambia
+                return false;
+            }
+        });
     }
 
     private void seeAllSeries(View view) {

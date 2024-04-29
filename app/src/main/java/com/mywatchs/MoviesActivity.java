@@ -1,12 +1,17 @@
 package com.mywatchs;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.mywatchs.adapter.GenreAdapter;
 import com.mywatchs.adapter.MovieAdapter;
@@ -18,6 +23,7 @@ import com.mywatchs.model.serie.Serie;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MoviesActivity extends AppCompatActivity {
 
@@ -26,6 +32,7 @@ public class MoviesActivity extends AppCompatActivity {
     private int page;
     private List<Movie> movies;
     private List<Genre> genres;
+    private String movieName;
     private RecyclerView view;
     private MovieAdapter adapter;
     private boolean isLoading = false;
@@ -42,10 +49,55 @@ public class MoviesActivity extends AppCompatActivity {
         page = 1;
         movies = new ArrayList<>();
         genres = new ArrayList<>();
+        movieName = "";
         createAdapter();
         getMovies(page);
         getGenres();
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.action_bar, menu);
+        MenuItem searchMenuItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) searchMenuItem.getActionView();
+        searchView.setQueryHint("Buscar pelicula");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                movieName = newText;
+                page = 1;
+                movieDAO.getMoviesByPageAndName(page, movieName, new MovieDAO.MovieDataCallback() {
+                    @Override
+                    public void onSuccessMovies(List<Movie> movies) {
+                        MoviesActivity.this.movies.clear();
+                        MoviesActivity.this.movies.addAll(movies);
+                        adapter.notifyDataSetChanged();
+                        isLoading = false;
+                    }
+
+                    @Override
+                    public void onSuccessSeries(List<Serie> series) {
+                        // Handle series if needed
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                        // Handle error if needed
+                        isLoading = false;
+                    }
+                });
+                return false;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
+    }
+
 
     private void getGenres() {
         genresDAO.getMoviesGenres(new GenresDAO.GenresDataCallback() {
@@ -86,7 +138,7 @@ public class MoviesActivity extends AppCompatActivity {
 
 
     private void getMovies(int page) {
-        movieDAO.getMoviesByPage(page, new MovieDAO.MovieDataCallback() {
+        movieDAO.getMoviesByPageAndName(page, movieName, new MovieDAO.MovieDataCallback() {
             @Override
             public void onSuccessMovies(List<Movie> movies) {
                 MoviesActivity.this.movies.addAll(movies);
@@ -119,7 +171,7 @@ public class MoviesActivity extends AppCompatActivity {
     private void loadMoreData() {
         isLoading = true;
         page++;
-        movieDAO.getMoviesByPage(page, new MovieDAO.MovieDataCallback() {
+        movieDAO.getMoviesByPageAndName(page, movieName, new MovieDAO.MovieDataCallback() {
             @Override
             public void onSuccessMovies(List<Movie> movies) {
                 MoviesActivity.this.movies.addAll(movies);

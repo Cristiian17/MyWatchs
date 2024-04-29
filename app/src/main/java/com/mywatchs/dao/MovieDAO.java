@@ -66,15 +66,19 @@ public class MovieDAO {
             }
         }.execute();
     }
-    public static void getMoviesByPage(int pageNumber, final MovieDataCallback callback) {
+    public static void getMoviesByPageAndName(int pageNumber, String movieName, final MovieDataCallback callback) {
         new AsyncTask<Void, Void, List<Movie>>() {
             @Override
             protected List<Movie> doInBackground(Void... voids) {
                 OkHttpClient client = new OkHttpClient();
 
                 // Construye la URL con el número de página actual
-                String url = BASE_URL + "discover/movie?include_adult=false&include_video=false&language=es-ES&page=" + pageNumber + "&sort_by=vote_count.desc";
-
+                String url;
+                if (movieName.isEmpty()){
+                    url = BASE_URL + "discover/movie?include_adult=false&include_video=false&language=es-ES&page=" + pageNumber + "&sort_by=vote_count.desc";
+                }else{
+                    url = BASE_URL + "search/movie?include_adult=false&language=es-ES&page=" + pageNumber + "&query=" + movieName + "&sort_by=vote_count.desc";
+                }
                 Request request = new Request.Builder()
                         .url(url)
                         .get()
@@ -149,14 +153,19 @@ public class MovieDAO {
         }.execute();
     }
 
-    public static void getSeriesByPage(int pageNumber , final MovieDataCallback callback) {
+    public static void getSeriesByPageAndName(int pageNumber, String name , final MovieDataCallback callback) {
         new AsyncTask<Void, Void, List<Serie>>() {
             @Override
             protected List<Serie> doInBackground(Void... voids) {
                 OkHttpClient client = new OkHttpClient();
-
+                String url;
+                if(name.isEmpty()){
+                    url = BASE_URL + "discover/tv?include_adult=false&include_null_first_air_dates=false&language=es-ES&page=" + pageNumber + "&sort_by=vote_count.desc";
+                }else{
+                    url = BASE_URL + "search/tv?include_adult=false&language=es-ES&page=" + pageNumber + "&query=" + name + "&sort_by=vote_count.desc";
+                }
                 Request request = new Request.Builder()
-                        .url(BASE_URL + "discover/tv?include_adult=false&include_null_first_air_dates=false&language=es-ES&page=" + pageNumber + "&sort_by=vote_count.desc")
+                        .url(url)
                         .get()
                         .addHeader("accept", "application/json")
                         .addHeader("Authorization", TOKEN)

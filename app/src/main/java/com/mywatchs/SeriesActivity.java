@@ -1,12 +1,15 @@
 package com.mywatchs;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.mywatchs.adapter.GenreAdapter;
 import com.mywatchs.adapter.SerieAdapter;
@@ -25,6 +28,7 @@ public class SeriesActivity extends AppCompatActivity {
     private List<Serie> series;
     private RecyclerView view;
     private SerieAdapter adapter;
+    String serieName;
     private boolean isLoading = false;
     private GenresDAO genresDAO;
     private List<Genre> genres;
@@ -39,6 +43,7 @@ public class SeriesActivity extends AppCompatActivity {
         genresDAO = new GenresDAO();
         view = findViewById(R.id.allSeriesView);
         page = 1;
+        serieName = "";
         series = new ArrayList<>();
         genres = new ArrayList<>();
         createAdapter();
@@ -82,9 +87,51 @@ public class SeriesActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.action_bar, menu);
+        MenuItem searchMenuItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) searchMenuItem.getActionView();
+        searchView.setQueryHint("Buscar serie");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                serieName = newText;
+                page = 1;
+                movieDAO.getSeriesByPageAndName(page, serieName, new MovieDAO.MovieDataCallback() {
+                    @Override
+                    public void onSuccessMovies(List<Movie> movies) {
+                    }
+
+                    @Override
+                    public void onSuccessSeries(List<Serie> series) {
+                        SeriesActivity.this.series.clear();
+                        SeriesActivity.this.series.addAll(series);
+                        adapter.notifyDataSetChanged();
+                        isLoading = false;
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                        // Handle error if needed
+                        isLoading = false;
+                    }
+                });
+                return false;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
+    }
+
 
     private void getSeries(int page) {
-        movieDAO.getSeriesByPage(page, new MovieDAO.MovieDataCallback() {
+        movieDAO.getSeriesByPageAndName(page,serieName, new MovieDAO.MovieDataCallback() {
             @Override
             public void onSuccessMovies(List<Movie> movies) {
 
@@ -117,7 +164,7 @@ public class SeriesActivity extends AppCompatActivity {
     private void loadMoreData() {
         isLoading = true;
         page++;
-        movieDAO.getSeriesByPage(page, new MovieDAO.MovieDataCallback() {
+        movieDAO.getSeriesByPageAndName(page,serieName ,new MovieDAO.MovieDataCallback() {
             @Override
             public void onSuccessMovies(List<Movie> movies) {
 

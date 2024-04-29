@@ -54,7 +54,7 @@ public class SerieDetailsActivity extends AppCompatActivity {
                 genre.setText(serieDetails.getGenres().toString());
 
                 TextView airDate = findViewById(R.id.tv_airdate_series);
-                airDate.setText(serieDetails.getFirstAirDate() +"-"+serieDetails.getLastAirDate());
+                airDate.setText(serieDetails.getFirstAirDate() +"/"+serieDetails.getLastAirDate());
 
                 TextView voteAverage = findViewById(R.id.tv_voteAverage_serie);
                 voteAverage.setText(""+serieDetails.getVoteAverage());
