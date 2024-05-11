@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment">
+    tools:context=".ui.home.HomeFragment"
+    android:background="@color/background">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/moviesView"
@@ -19,7 +20,8 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="258dp"
         android:text="Peliculas"
         android:textColor="@color/white"
@@ -34,7 +36,8 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
         android:text="Series"
         android:textColor="@color/white"
         android:textSize="20sp"
@@ -59,7 +62,7 @@
         android:id="@+id/btn_all_movies"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
         android:backgroundTint="@color/buttons"
         android:text="Ver todo"
         app:layout_constraintEnd_toEndOf="parent"
@@ -69,7 +72,7 @@
         android:id="@+id/btn_all_series"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="88dp"
+        android:layout_marginTop="24dp"
         android:backgroundTint="@color/buttons"
         android:text="Ver todo"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,4 +1,4 @@
-package com.mywatchs.dao;
+package com.mywatchs.ApiDao;
 
 import android.os.AsyncTask;
 
@@ -16,9 +16,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class MovieDAO {
+public class MovieApiDAO {
 
-    private static final String TAG = MovieDAO.class.getSimpleName();
+    private static final String TAG = MovieApiDAO.class.getSimpleName();
     private static final String BASE_URL = "https://api.themoviedb.org/3/";
     private static final String TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0ZGE2OGRjODM2MWIxYjIwOGNiMGNjYzU2ZjRhMWU1ZCIsInN1YiI6IjY1ZjlhYmJkMGYyZmJkMDE3ZDhhZjU1ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.hnLH39M5kQFCogPD_FWQuDUjcsZzzP0fQKeI4oOwD_8";
 

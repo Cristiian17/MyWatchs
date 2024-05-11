@@ -13,8 +13,8 @@ import android.view.MenuItem;
 
 import com.mywatchs.adapter.GenreAdapter;
 import com.mywatchs.adapter.SerieAdapter;
-import com.mywatchs.dao.GenresDAO;
-import com.mywatchs.dao.MovieDAO;
+import com.mywatchs.ApiDao.GenresApiDAO;
+import com.mywatchs.ApiDao.MovieApiDAO;
 import com.mywatchs.model.genre.Genre;
 import com.mywatchs.model.movie.Movie;
 import com.mywatchs.model.serie.Serie;
@@ -23,14 +23,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SeriesActivity extends AppCompatActivity {
-    private MovieDAO movieDAO;
+    private MovieApiDAO movieApiDAO;
     private int page;
     private List<Serie> series;
     private RecyclerView view;
     private SerieAdapter adapter;
     String serieName;
     private boolean isLoading = false;
-    private GenresDAO genresDAO;
+    private GenresApiDAO genresApiDAO;
     private List<Genre> genres;
 
 
@@ -39,8 +39,8 @@ public class SeriesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_series);
 
-        movieDAO = new MovieDAO();
-        genresDAO = new GenresDAO();
+        movieApiDAO = new MovieApiDAO();
+        genresApiDAO = new GenresApiDAO();
         view = findViewById(R.id.allSeriesView);
         page = 1;
         serieName = "";
@@ -70,7 +70,7 @@ public class SeriesActivity extends AppCompatActivity {
         });
     }
     private void getGenres() {
-        genresDAO.getSeriesGenres(new GenresDAO.GenresDataCallback() {
+        genresApiDAO.getSeriesGenres(new GenresApiDAO.GenresDataCallback() {
             @Override
             public void onSuccessGenres(List<Genre> genres) {
                 SeriesActivity.this.genres = genres;
@@ -104,7 +104,7 @@ public class SeriesActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String newText) {
                 serieName = newText;
                 page = 1;
-                movieDAO.getSeriesByPageAndName(page, serieName, new MovieDAO.MovieDataCallback() {
+                movieApiDAO.getSeriesByPageAndName(page, serieName, new MovieApiDAO.MovieDataCallback() {
                     @Override
                     public void onSuccessMovies(List<Movie> movies) {
                     }
@@ -131,7 +131,7 @@ public class SeriesActivity extends AppCompatActivity {
 
 
     private void getSeries(int page) {
-        movieDAO.getSeriesByPageAndName(page,serieName, new MovieDAO.MovieDataCallback() {
+        movieApiDAO.getSeriesByPageAndName(page,serieName, new MovieApiDAO.MovieDataCallback() {
             @Override
             public void onSuccessMovies(List<Movie> movies) {
 
@@ -164,7 +164,7 @@ public class SeriesActivity extends AppCompatActivity {
     private void loadMoreData() {
         isLoading = true;
         page++;
-        movieDAO.getSeriesByPageAndName(page,serieName ,new MovieDAO.MovieDataCallback() {
+        movieApiDAO.getSeriesByPageAndName(page,serieName ,new MovieApiDAO.MovieDataCallback() {
             @Override
             public void onSuccessMovies(List<Movie> movies) {
 

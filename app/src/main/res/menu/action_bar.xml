@@ -4,7 +4,7 @@
     <item
         android:id="@+id/search"
         android:title="Buscar"
-        android:iconTint="@color/buttons"
+        android:iconTint="@color/white"
         android:icon="@drawable/search"
         app:showAsAction="ifRoom|collapseActionView"
         app:actionViewClass="androidx.appcompat.widget.SearchView" />
