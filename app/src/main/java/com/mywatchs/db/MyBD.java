@@ -2,22 +2,19 @@ package com.mywatchs.db;
 
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
-import com.mywatchs.Dao.MovieDetailsDAO;
-import com.mywatchs.Dao.MoviePOJO;
-import com.mywatchs.Dao.SerieDetailsDAO;
-import com.mywatchs.Dao.SeriePOJO;
 
-@Database(entities = {MoviePOJO.class, SeriePOJO.class}, version = 1)
+import com.mywatchs.db.Dao.MovieDAO;
+import com.mywatchs.db.Dao.SerieDAO;
+import com.mywatchs.db.Dao.entities.CompletedMovie;
+import com.mywatchs.db.Dao.entities.CompletedSerie;
+import com.mywatchs.db.Dao.entities.DetachMovie;
+import com.mywatchs.db.Dao.entities.DetachSerie;
+import com.mywatchs.db.Dao.entities.ForWatchMovie;
+import com.mywatchs.db.Dao.entities.ForWatchSerie;
+
+@Database(entities = {CompletedMovie.class, CompletedSerie.class, DetachMovie.class, DetachSerie.class, ForWatchMovie.class, ForWatchSerie.class}, version = 1)
 public abstract class MyBD extends RoomDatabase {
-    public abstract MovieDetailsDAO movieDetailsDao();
+    public abstract MovieDAO movieDetailsDao();
 
-    public abstract SerieDetailsDAO serieDetailsDao();
+    public abstract SerieDAO serieDetailsDao();
 }
-
-    /*// DAOs para las tablas adicionales
-    public abstract FavMoviesDAO favMoviesDao();
-    public abstract FavSeriesDAO favSeriesDao();
-    public abstract ForWatchMovieDAO forWatchMovieDao();
-    public abstract ForWatchSerieDAO forWatchSerieDao();
-    public abstract DetachMovieDAO detachMovieDao();
-    public abstract DetachSerieDAO detachSerieDao();*/

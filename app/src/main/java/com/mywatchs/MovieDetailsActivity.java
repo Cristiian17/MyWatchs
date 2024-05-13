@@ -7,14 +7,22 @@ import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.mywatchs.ApiDao.MovieDetailsApiDAO;
-import com.mywatchs.Dao.MovieDetailsDAO;
-import com.mywatchs.Dao.MoviePOJO;
+import com.mywatchs.db.Dao.MovieDAO;
+import com.mywatchs.db.Dao.SerieDAO;
+import com.mywatchs.db.Dao.entities.CompletedMovie;
+import com.mywatchs.db.Dao.entities.CompletedSerie;
+import com.mywatchs.db.Dao.entities.DetachMovie;
+import com.mywatchs.db.Dao.entities.DetachSerie;
+import com.mywatchs.db.Dao.entities.ForWatchMovie;
+import com.mywatchs.db.Dao.entities.ForWatchSerie;
 import com.mywatchs.db.MyBD;
 import com.mywatchs.model.movie.MovieDetails;
 import com.mywatchs.model.serie.SerieDetails;
@@ -35,33 +43,93 @@ public class MovieDetailsActivity extends AppCompatActivity {
         id = getIntent().getLongExtra("id",1);
         movieDetailsApiDAO = new MovieDetailsApiDAO();
         getMovie();
-        findViewById(R.id.button).setOnClickListener(this::addToFav);
+        findViewById(R.id.movie_addBtn).setOnClickListener(this::addToFav);
     }
 
     @SuppressLint("StaticFieldLeak")
     private void addToFav(View view) {
-        MoviePOJO m = new MoviePOJO(movieDetails.getId(), movieDetails.getTitle());
 
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                MyBD myBD = Room.databaseBuilder(getApplicationContext(),
-                        MyBD.class, "myDB").build();
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
 
-                MovieDetailsDAO favMoviesDAO = myBD.movieDetailsDao();
+        Button buttonCompletada = new Button(this);
+        buttonCompletada.setText("Completada");
+        layout.addView(buttonCompletada);
 
-                favMoviesDAO.insert(m);
-                List<MoviePOJO> list = favMoviesDAO.getAll();
-                list.forEach(m -> System.out.println(m.getName()));
+        Button buttonVerMasTarde = new Button(this);
+        buttonVerMasTarde.setText("Ver mas tarde");
+        layout.addView(buttonVerMasTarde);
 
-                return null;
-            }
+        Button buttonAbandonada = new Button(this);
+        buttonAbandonada.setText("Abandonada");
+        layout.addView(buttonAbandonada);
 
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                Toast.makeText(getApplicationContext(), "Película agregada a favoritos", Toast.LENGTH_SHORT).show();
-            }
-        }.execute();
+        setContentView(layout);
+        buttonCompletada.setOnClickListener(v -> {
+            CompletedMovie m = new CompletedMovie(movieDetails.getId(), movieDetails.getTitle(), movieDetails.getPosterPath());
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    MyBD myBD = Room.databaseBuilder(getApplicationContext(),
+                            MyBD.class, "myDB").build();
+
+                    MovieDAO movieDAO = myBD.movieDetailsDao();
+
+                    movieDAO.insert(m);
+                    movieDAO.getAllCompeltedMovies().forEach(m -> System.out.println(m.getName()));
+                    return null;
+                }
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    Toast.makeText(getApplicationContext(), "Pelicula agregada a completada", Toast.LENGTH_SHORT).show();
+                }
+            }.execute();
+            finish();
+        });
+
+        buttonVerMasTarde.setOnClickListener(v -> {
+            ForWatchMovie m = new ForWatchMovie(movieDetails.getId(), movieDetails.getTitle(), movieDetails.getPosterPath());
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    MyBD myBD = Room.databaseBuilder(getApplicationContext(),
+                            MyBD.class, "myDB").build();
+
+                    MovieDAO movieDAO = myBD.movieDetailsDao();
+
+                    movieDAO.insert(m);
+                    movieDAO.getAllForWatchMovies().forEach(m -> System.out.println(m.getName()));
+                    return null;
+                }
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    Toast.makeText(getApplicationContext(), "Pelicula agregada a ver mas tarde", Toast.LENGTH_SHORT).show();
+                }
+            }.execute();
+            finish();
+        });
+
+        buttonAbandonada.setOnClickListener(v -> {
+            DetachMovie m = new DetachMovie(movieDetails.getId(), movieDetails.getTitle(), movieDetails.getPosterPath());
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    MyBD myBD = Room.databaseBuilder(getApplicationContext(),
+                            MyBD.class, "myDB").build();
+
+                    MovieDAO movieDAO = myBD.movieDetailsDao();
+
+                    movieDAO.insert(m);
+                    movieDAO.getAllDetachedMovies().forEach(m -> System.out.println(m.getName()));
+                    return null;
+                }
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    Toast.makeText(getApplicationContext(), "Pelicula agregada a abandonada", Toast.LENGTH_SHORT).show();
+                }
+            }.execute();
+            finish();
+        });
     }
 
 
