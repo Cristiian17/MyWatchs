@@ -6,6 +6,8 @@ import androidx.room.Room;
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -44,6 +46,12 @@ public class MovieDetailsActivity extends AppCompatActivity {
         movieDetailsApiDAO = new MovieDetailsApiDAO();
         getMovie();
         findViewById(R.id.movie_addBtn).setOnClickListener(this::addToFav);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.options_menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -152,6 +160,16 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
                 TextView genre = findViewById(R.id.tv_serie_genre);
                 genre.setText(movieDetails.getGenres().toString());
+
+                TextView time = findViewById(R.id.tv_time);
+                time.setText(movieDetails.getRuntime() + "min");
+
+                TextView releaseDate = findViewById(R.id.tv_releaseDate);
+                releaseDate.setText("" + movieDetails.getReleaseDate());
+
+                TextView voteAverage = findViewById(R.id.tv_voteAverage_movie);
+                voteAverage.setText("" + movieDetails.getVoteAverage());
+
             }
 
             @Override
