@@ -1,9 +1,13 @@
 package com.mywatchs;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
 import android.annotation.SuppressLint;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -45,17 +49,25 @@ public class MovieDetailsActivity extends AppCompatActivity {
         id = getIntent().getLongExtra("id",1);
         movieDetailsApiDAO = new MovieDetailsApiDAO();
         getMovie();
-        findViewById(R.id.movie_addBtn).setOnClickListener(this::addToFav);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.options_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.search);
+        Drawable searchIcon = searchItem.getIcon();
+        if (searchIcon != null) {
+            searchIcon.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+            searchItem.setIcon(searchIcon);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
     @SuppressLint("StaticFieldLeak")
-    private void addToFav(View view) {
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Añadir a:");
 
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -65,14 +77,25 @@ public class MovieDetailsActivity extends AppCompatActivity {
         layout.addView(buttonCompletada);
 
         Button buttonVerMasTarde = new Button(this);
-        buttonVerMasTarde.setText("Ver mas tarde");
+        buttonVerMasTarde.setText("Ver más tarde");
         layout.addView(buttonVerMasTarde);
 
         Button buttonAbandonada = new Button(this);
         buttonAbandonada.setText("Abandonada");
         layout.addView(buttonAbandonada);
 
-        setContentView(layout);
+        Button buttonCancelar = new Button(this);
+        buttonCancelar.setText("Cancelar");
+        layout.addView(buttonCancelar);
+
+
+        builder.setView(layout);
+
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+
         buttonCompletada.setOnClickListener(v -> {
             CompletedMovie m = new CompletedMovie(movieDetails.getId(), movieDetails.getTitle(), movieDetails.getPosterPath());
             new AsyncTask<Void, Void, Void>() {
@@ -84,15 +107,16 @@ public class MovieDetailsActivity extends AppCompatActivity {
                     MovieDAO movieDAO = myBD.movieDetailsDao();
 
                     movieDAO.insert(m);
-                    movieDAO.getAllCompeltedMovies().forEach(m -> System.out.println(m.getName()));
+                    movieDAO.getAllCompeltedMovies().forEach(movie -> System.out.println(movie.getName()));
                     return null;
                 }
+
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    Toast.makeText(getApplicationContext(), "Pelicula agregada a completada", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Película agregada a completada", Toast.LENGTH_SHORT).show();
                 }
             }.execute();
-            finish();
+            dialog.dismiss();
         });
 
         buttonVerMasTarde.setOnClickListener(v -> {
@@ -106,15 +130,16 @@ public class MovieDetailsActivity extends AppCompatActivity {
                     MovieDAO movieDAO = myBD.movieDetailsDao();
 
                     movieDAO.insert(m);
-                    movieDAO.getAllForWatchMovies().forEach(m -> System.out.println(m.getName()));
+                    movieDAO.getAllForWatchMovies().forEach(movie -> System.out.println(movie.getName()));
                     return null;
                 }
+
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    Toast.makeText(getApplicationContext(), "Pelicula agregada a ver mas tarde", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Película agregada a ver más tarde", Toast.LENGTH_SHORT).show();
                 }
             }.execute();
-            finish();
+            dialog.dismiss();
         });
 
         buttonAbandonada.setOnClickListener(v -> {
@@ -128,19 +153,22 @@ public class MovieDetailsActivity extends AppCompatActivity {
                     MovieDAO movieDAO = myBD.movieDetailsDao();
 
                     movieDAO.insert(m);
-                    movieDAO.getAllDetachedMovies().forEach(m -> System.out.println(m.getName()));
+                    movieDAO.getAllDetachedMovies().forEach(movie -> System.out.println(movie.getName()));
                     return null;
                 }
+
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    Toast.makeText(getApplicationContext(), "Pelicula agregada a abandonada", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Película agregada a abandonada", Toast.LENGTH_SHORT).show();
                 }
             }.execute();
-            finish();
+            dialog.dismiss();
         });
+
+        buttonCancelar.setOnClickListener(v -> dialog.dismiss());
+
+        return super.onOptionsItemSelected(item);
     }
-
-
     private void getMovie() {
         movieDetailsApiDAO.getMovieDetails(new MovieDetailsApiDAO.MovieDataCallback() {
 
@@ -184,7 +212,4 @@ public class MovieDetailsActivity extends AppCompatActivity {
             }
         }, id);
     }
-
-
-
 }

@@ -42,7 +42,7 @@ public interface MovieDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(ForWatchMovie movie);
 
-    @Query("SELECT * FROM DetachMovie")
+    @Query("SELECT * FROM ForWatchMovie")
     List<ForWatchMovie> getAllForWatchMovies();
 
     @Query("SELECT * FROM ForWatchMovie WHERE id = :id")
