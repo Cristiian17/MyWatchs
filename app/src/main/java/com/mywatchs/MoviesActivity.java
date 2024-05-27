@@ -85,12 +85,10 @@ public class MoviesActivity extends AppCompatActivity {
 
                     @Override
                     public void onSuccessSeries(List<Serie> series) {
-                        // Handle series if needed
                     }
 
                     @Override
                     public void onError(String errorMessage) {
-                        // Handle error if needed
                         isLoading = false;
                     }
                 });
@@ -114,7 +112,6 @@ public class MoviesActivity extends AppCompatActivity {
 
             @Override
             public void onError(String errorMessage) {
-                // Manejar el error si es necesario
             }
         });
     }
@@ -153,7 +150,7 @@ public class MoviesActivity extends AppCompatActivity {
 
                 intent.putExtra("id",movie.getId());
                 startActivity(intent);
-            });
+                });
 
                 view.setAdapter(adapter);
             }
@@ -183,12 +180,10 @@ public class MoviesActivity extends AppCompatActivity {
 
             @Override
             public void onSuccessSeries(List<Serie> series) {
-                // Handle series if needed
             }
 
             @Override
             public void onError(String errorMessage) {
-                // Handle error if needed
                 isLoading = false;
             }
         });
