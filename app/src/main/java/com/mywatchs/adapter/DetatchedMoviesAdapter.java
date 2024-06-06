@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -37,7 +38,7 @@ public class DetatchedMoviesAdapter extends RecyclerView.Adapter<DetatchedMovies
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         public ImageView imageView;
         public TextView textView;
-        public Button deleteButton;
+        public ImageButton deleteButton;
 
         public MyViewHolder(View v) {
             super(v);

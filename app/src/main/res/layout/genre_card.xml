@@ -5,7 +5,7 @@
     android:layout_height="40dp"
     android:layout_marginLeft="5dp"
     android:orientation="vertical"
-    app:cardBackgroundColor="#9746D1"
+    app:cardBackgroundColor="#96aab7"
     app:cardCornerRadius="3dp">
 
     <TextView
