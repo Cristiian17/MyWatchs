@@ -17,8 +17,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class MovieApiDAO {
-
-    private static final String TAG = MovieApiDAO.class.getSimpleName();
     private static final String BASE_URL = "https://api.themoviedb.org/3/";
     private static final String TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0ZGE2OGRjODM2MWIxYjIwOGNiMGNjYzU2ZjRhMWU1ZCIsInN1YiI6IjY1ZjlhYmJkMGYyZmJkMDE3ZDhhZjU1ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.hnLH39M5kQFCogPD_FWQuDUjcsZzzP0fQKeI4oOwD_8";
 
@@ -66,52 +64,6 @@ public class MovieApiDAO {
             }
         }.execute();
     }
-    public static void getMoviesByPageAndName(int pageNumber, String movieName, final MovieDataCallback callback) {
-        new AsyncTask<Void, Void, List<Movie>>() {
-            @Override
-            protected List<Movie> doInBackground(Void... voids) {
-                OkHttpClient client = new OkHttpClient();
-
-                // Construye la URL con el número de página actual
-                String url;
-                if (movieName.isEmpty()){
-                    url = BASE_URL + "discover/movie?include_adult=false&include_video=false&language=es-ES&page=" + pageNumber + "&sort_by=vote_count.desc";
-                }else{
-                    url = BASE_URL + "search/movie?include_adult=false&language=es-ES&page=" + pageNumber + "&query=" + movieName + "&sort_by=vote_count.desc";
-                }
-                Request request = new Request.Builder()
-                        .url(url)
-                        .get()
-                        .addHeader("accept", "application/json")
-                        .addHeader("Authorization", TOKEN)
-                        .build();
-
-                try {
-                    Response response = client.newCall(request).execute();
-                    if (response.isSuccessful()) {
-                        String responseData = response.body().string();
-                        Gson gson = new Gson();
-                        MovieResponse movieResponse = gson.fromJson(responseData, MovieResponse.class);
-                        return Arrays.asList(movieResponse.getResults());
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(List<Movie> movies) {
-                super.onPostExecute(movies);
-                if (movies != null) {
-                    callback.onSuccessMovies(movies);
-                } else {
-                    callback.onError("Error fetching data from API");
-                }
-            }
-        }.execute();
-    }
-
 
     public static void getSeries(final MovieDataCallback callback) {
         new AsyncTask<Void, Void, List<Serie>>() {
@@ -153,24 +105,77 @@ public class MovieApiDAO {
         }.execute();
     }
 
-    public static void getSeriesByPageAndName(int pageNumber, String name , final MovieDataCallback callback) {
-        new AsyncTask<Void, Void, List<Serie>>() {
+    public static void getMoviesByPageAndNameAndGenre(int pageNumber, String name, Integer genreId, final MovieDataCallback callback) {
+        new AsyncTask<Void, Void, List<Movie>>() {
             @Override
-            protected List<Serie> doInBackground(Void... voids) {
+            protected List<Movie> doInBackground(Void... voids) {
                 OkHttpClient client = new OkHttpClient();
-                String url;
-                if(name.isEmpty()){
-                    url = BASE_URL + "discover/tv?include_adult=false&include_null_first_air_dates=false&language=es-ES&page=" + pageNumber + "&sort_by=vote_count.desc";
-                }else{
-                    url = BASE_URL + "search/tv?include_adult=false&language=es-ES&page=" + pageNumber + "&query=" + name + "&sort_by=vote_count.desc";
+                StringBuilder urlBuilder = new StringBuilder();
+                if (name.isEmpty()) {
+                    urlBuilder.append(BASE_URL).append("discover/movie?include_adult=false&include_video=false&language=es-ES&page=").append(pageNumber).append("&sort_by=vote_count.desc");
+                } else {
+                    urlBuilder.append(BASE_URL).append("search/movie?include_adult=false&language=es-ES&page=").append(pageNumber).append("&query=").append(name).append("&sort_by=vote_count.desc");
                 }
+
+                if (genreId != null) {
+                    urlBuilder.append("&with_genres=").append(genreId);
+                }
+
                 Request request = new Request.Builder()
-                        .url(url)
+                        .url(urlBuilder.toString())
                         .get()
                         .addHeader("accept", "application/json")
                         .addHeader("Authorization", TOKEN)
                         .build();
 
+                try {
+                    Response response = client.newCall(request).execute();
+                    if (response.isSuccessful()) {
+                        String responseData = response.body().string();
+                        Gson gson = new Gson();
+                        MovieResponse movieResponse = gson.fromJson(responseData, MovieResponse.class);
+                        return Arrays.asList(movieResponse.getResults());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(List<Movie> movies) {
+                super.onPostExecute(movies);
+                if (movies != null) {
+                    callback.onSuccessMovies(movies);
+                } else {
+                    callback.onError("Error fetching data from API");
+                }
+            }
+        }.execute();
+    }
+
+    public static void getSeriesByPageNameAndGenre(int pageNumber, String name, Integer genreId, final MovieDataCallback callback) {
+        new AsyncTask<Void, Void, List<Serie>>() {
+            @Override
+            protected List<Serie> doInBackground(Void... voids) {
+                OkHttpClient client = new OkHttpClient();
+                StringBuilder urlBuilder = new StringBuilder();
+                if (name.isEmpty()) {
+                    urlBuilder.append(BASE_URL).append("discover/tv?include_adult=false&include_null_first_air_dates=false&language=es-ES&page=").append(pageNumber).append("&sort_by=vote_count.desc");
+                } else {
+                    urlBuilder.append(BASE_URL).append("search/tv?include_adult=false&language=es-ES&page=").append(pageNumber).append("&query=").append(name).append("&sort_by=vote_count.desc");
+                }
+
+                if (genreId != null) {
+                    urlBuilder.append("&with_genres=").append(genreId);
+                }
+
+                Request request = new Request.Builder()
+                        .url(urlBuilder.toString())
+                        .get()
+                        .addHeader("accept", "application/json")
+                        .addHeader("Authorization", TOKEN)
+                        .build();
 
                 try {
                     Response response = client.newCall(request).execute();
@@ -197,5 +202,7 @@ public class MovieApiDAO {
             }
         }.execute();
     }
+
+
 }
 

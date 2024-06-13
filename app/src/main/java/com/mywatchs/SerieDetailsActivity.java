@@ -100,7 +100,8 @@ public class SerieDetailsActivity extends AppCompatActivity {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    Toast.makeText(getApplicationContext(), "Serie agregada a completada", Toast.LENGTH_SHORT).show();
+
+                    Toast.makeText(getApplicationContext(), s.getName() + " agregada a completada", Toast.LENGTH_SHORT).show();
                 }
             }.execute();
             dialog.dismiss();
@@ -122,7 +123,7 @@ public class SerieDetailsActivity extends AppCompatActivity {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    Toast.makeText(getApplicationContext(), "Serie agregada a ver más tarde", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), s.getName() + " agregada a ver más tarde", Toast.LENGTH_SHORT).show();
                 }
             }.execute();
             dialog.dismiss();
@@ -144,7 +145,7 @@ public class SerieDetailsActivity extends AppCompatActivity {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    Toast.makeText(getApplicationContext(), "Serie agregada a abandonada", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), s.getName() + " agregada a abandonada", Toast.LENGTH_SHORT).show();
                 }
             }.execute();
             dialog.dismiss();

@@ -113,7 +113,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    Toast.makeText(getApplicationContext(), "Película agregada a completada", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), m.getName() + " agregada a completada", Toast.LENGTH_SHORT).show();
                 }
             }.execute();
             dialog.dismiss();
@@ -136,7 +136,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    Toast.makeText(getApplicationContext(), "Película agregada a ver más tarde", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), m.getName() + " agregada a ver más tarde", Toast.LENGTH_SHORT).show();
                 }
             }.execute();
             dialog.dismiss();
@@ -159,7 +159,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    Toast.makeText(getApplicationContext(), "Película agregada a abandonada", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), m.getName() + " agregada a abandonada", Toast.LENGTH_SHORT).show();
                 }
             }.execute();
             dialog.dismiss();

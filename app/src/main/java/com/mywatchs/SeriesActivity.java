@@ -33,11 +33,10 @@ public class SeriesActivity extends AppCompatActivity {
     private List<Serie> series;
     private RecyclerView view;
     private SerieAdapter adapter;
-    String serieName;
+    private String serieName;
     private boolean isLoading = false;
     private GenresApiDAO genresApiDAO;
-    private List<Genre> genres;
-
+    private Genre selectedGenre;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +49,6 @@ public class SeriesActivity extends AppCompatActivity {
         page = 1;
         serieName = "";
         series = new ArrayList<>();
-        genres = new ArrayList<>();
         createAdapter();
         getSeries(page);
         getGenres();
@@ -75,20 +73,30 @@ public class SeriesActivity extends AppCompatActivity {
             }
         });
     }
+
     private void getGenres() {
         genresApiDAO.getSeriesGenres(new GenresApiDAO.GenresDataCallback() {
             @Override
             public void onSuccessGenres(List<Genre> genres) {
-                SeriesActivity.this.genres = genres;
-                RecyclerView genderView = findViewById(R.id.seriesGenresView);
-                genderView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
-                GenreAdapter adapter = new GenreAdapter(genres, getApplicationContext());
-                genderView.setAdapter(adapter);
+                RecyclerView genreView = findViewById(R.id.seriesGenresView);
+                genreView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
+
+                GenreAdapter.OnItemClickListener listener = genre -> {
+                    if (selectedGenre == genre) {
+                        selectedGenre = null;
+                        getSeries(1);
+                    } else {
+                        selectedGenre = genre;
+                        filterSeriesByGenre(genre);
+                    }
+                };
+
+                GenreAdapter adapter = new GenreAdapter(genres, getApplicationContext(), listener);
+                genreView.setAdapter(adapter);
             }
 
             @Override
             public void onError(String errorMessage) {
-                // Manejar el error si es necesario
             }
         });
     }
@@ -104,7 +112,6 @@ public class SeriesActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-
                 return false;
             }
 
@@ -112,84 +119,64 @@ public class SeriesActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String newText) {
                 serieName = newText;
                 page = 1;
-                movieApiDAO.getSeriesByPageAndName(page, serieName, new MovieApiDAO.MovieDataCallback() {
-                    @Override
-                    public void onSuccessMovies(List<Movie> movies) {
-                    }
-
-                    @Override
-                    public void onSuccessSeries(List<Serie> series) {
-                        SeriesActivity.this.series.clear();
-                        SeriesActivity.this.series.addAll(series);
-                        adapter.notifyDataSetChanged();
-                        isLoading = false;
-                    }
-
-                    @Override
-                    public void onError(String errorMessage) {
-                        // Handle error if needed
-                        isLoading = false;
-                    }
-                });
+                filterSeries();
                 return false;
             }
         });
         return super.onCreateOptionsMenu(menu);
     }
 
+    private void filterSeries() {
+        series.clear();
+        adapter.notifyDataSetChanged();
+        loadSeries(page, serieName, selectedGenre);
+    }
+
+    private void filterSeriesByGenre(Genre genre) {
+        series.clear();
+        adapter.notifyDataSetChanged();
+        loadSeries(1, serieName, genre);
+    }
 
     private void getSeries(int page) {
-        movieApiDAO.getSeriesByPageAndName(page,serieName, new MovieApiDAO.MovieDataCallback() {
+        loadSeries(page, serieName, selectedGenre);
+    }
+
+    private void loadSeries(int page, String serieName, Genre genre) {
+        isLoading = true;
+        movieApiDAO.getSeriesByPageNameAndGenre(page, serieName, genre != null ? genre.getId() : null, new MovieApiDAO.MovieDataCallback() {
             @Override
             public void onSuccessMovies(List<Movie> movies) {
-
             }
 
             @Override
             public void onSuccessSeries(List<Serie> series) {
                 SeriesActivity.this.series.addAll(series);
-
-
-                adapter = new SerieAdapter(SeriesActivity.this.series, getApplicationContext(), position -> {
-                    Serie serie = SeriesActivity.this.series.get(position);
-
-                    Intent intent = new Intent(getApplicationContext(), SerieDetailsActivity.class);
-
-                    intent.putExtra("id",serie.getId());
-                    startActivity(intent);
-                });
-
-                view.setAdapter(adapter);
+                if (adapter == null) {
+                    adapter = new SerieAdapter(SeriesActivity.this.series, getApplicationContext(), position -> {
+                        Serie serie = SeriesActivity.this.series.get(position);
+                        Intent intent = new Intent(getApplicationContext(), SerieDetailsActivity.class);
+                        intent.putExtra("id", serie.getId());
+                        startActivity(intent);
+                    });
+                    view.setAdapter(adapter);
+                } else {
+                    adapter.notifyDataSetChanged();
+                }
+                isLoading = false;
             }
 
             @Override
             public void onError(String errorMessage) {
-
+                isLoading = false;
             }
         });
     }
 
     private void loadMoreData() {
-        isLoading = true;
-        page++;
-        movieApiDAO.getSeriesByPageAndName(page,serieName ,new MovieApiDAO.MovieDataCallback() {
-            @Override
-            public void onSuccessMovies(List<Movie> movies) {
-
-            }
-
-            @Override
-            public void onSuccessSeries(List<Serie> series) {
-                SeriesActivity.this.series.addAll(series);
-                adapter.notifyDataSetChanged();
-                isLoading = false;
-            }
-
-            @Override
-            public void onError(String errorMessage) {
-                // Handle error if needed
-                isLoading = false;
-            }
-        });
+        if (!isLoading) {
+            page++;
+            loadSeries(page, serieName, selectedGenre);
+        }
     }
 }
